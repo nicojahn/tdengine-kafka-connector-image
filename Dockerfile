@@ -10,8 +10,8 @@ RUN cd /tmp/ && \
     rm -rf tmp/*
 
 RUN cd /tmp/ && \
-    curl -O https://www.tdengine.com/assets-download/3.0/TDengine-client-3.0.2.6-Linux-x64.tar.gz && \
-    tar -xzvf TDengine-client-3.0.2.6-Linux-x64.tar.gz && \
+    curl -O https://www.tdengine.com/assets-download/3.0/TDengine-client-3.0.2.6-Linux-arm64.tar.gz && \
+    tar -xzvf TDengine-client-3.0.2.6-Linux-arm64.tar.gz && \
     cd TDengine-client-3.0.2.6 && \
     ./install_client.sh && \
     cd / && \
