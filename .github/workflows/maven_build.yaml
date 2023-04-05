@@ -1,0 +1,41 @@
+---
+name: maven_build
+on:
+    workflow_call: # allow this workflow to be called from other workflows
+
+jobs:
+    maven_build:
+        runs-on: ubuntu-latest
+        container:
+            image: docker.io/maven:3.9.0-sapmachine-17
+            # env:
+            #   NODE_ENV: development
+            # ports:
+            #   - 80
+            # options: --cpus 1
+            volumes:
+                - maven_chache_volume:/root/.m2/repository
+        steps:
+            # Cache maven dependencies
+            - name: Cache
+              uses: actions/cache@v3
+              with:
+                  path: ~/.m2/repository
+                  key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+                  restore-keys: |
+                      ${{ runner.os }}-maven-
+            - name: Check out code
+              run: |
+                  git clone https://github.com/taosdata/kafka-connect-tdengine/
+                  cd kafka-connect-tdengine/
+                  git checkout '3.0'
+            - name: Build with Maven
+              working-directory: ./kafka-connect-tdengine
+              run: |
+                  mvn clean package -Dmaven.test.skip=true --file pom.xml
+            - name: Temporarily save mvn package
+              uses: actions/upload-artifact@v3
+              with:
+                  name: maven-artifact
+                  path: kafka-connect-tdengine/target/components/packages/*.zip
+                  retention-days: 1
